@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html ng-app="abdrcoderApp" >
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css"
+    rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/lib/angular.js"></script>
+	<script type="text/javascript" src="js/lib/jquery.json-2.2.min.js"></script>
+    <script type="text/javascript" src="js/abdrcontroller.js"></script>
+<!--   <script type="text/javascript" src="js/lib/jquery-1.10.2.min.js"></script> -->
+  </head>
+  
+  <body class="" ng-controller="tableCtrl">
+    <div class="navbar navbar-default navbar-static-top">
+      <style>
+        .body{padding-top:70px}
+      </style>
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button><a class="navbar-brand" href="#">Brand</a>
+
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Home</a>
+
+            </li>
+            <li><a href="#">Contacts</a>
+
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="jumbotron">
+            <h1>ABDR代码生成工具v1.0 </h1>
+            <p>angularjs + bootstrap + django +restframework &nbsp;</p><a class="btn btn-primary" onclick="alert('2014-3-12 初版建立')">版本历史</a>
+
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">表结构</h3>
+            </div>
+            <div class="panel-body">
+              <label>应用名</label>
+              <input type="text" ng-model="appname"  >&nbsp;
+              <label>表名</label><input type="text" placeholder="表名" ng-model="tablename" >
+			<hr>
+               预览：
+				<textarea id="showresult"  rows="3" cols="50"></textarea>
+				<input type="file" id="openselect" style="display: inline;width: 250px;"> 
+				<a class="btn btn-primary btn-sm" ng-click="import2()" >导入表结构</a>
+				<a class="btn btn-primary btn-sm" ng-click="export2()">导出表结构</a>
+			  <hr>
+			   <h4>字段新增修改区域</h4>
+			   <label>序号：</label><input type="text" ng-model="my.id" size="3">
+			   <label>字段名：</label><input type="text" ng-model="my.name"  required >
+			   
+			   <label>类型：</label>
+					<select ng-model="my.type" ng-change="seltype()">
+					  <option value="CharField">CharField</option>
+					  <option value="IntegerField">IntegerField</option>
+					  <option value="DecimalField">DecimalField</option>					  
+					  <option value="DateTimeField">DateTimeField</option>
+					  <option value="BooleanField">BooleanField</option>
+					  <option value="IPAddressField">IPAddressField</option>
+					  <option value="AutoField">AutoField</option>
+					  <option value="ForeignKey">ForeignKey(多对一)</option>
+					  <option value="ManyToManyField">ManyToManyField</option>
+					  <option value="OneToOneField">OneToOneField</option>
+					</select>
+				<span id="max_length"><label>长度：</label><input type="text" ng-model="my.max_length" size="3"></span>
+				<span id="true" style="display: none;"><label>真假:</label><select ng-model="my.true_false">
+					<option value="True" selected="selected">True</option>
+					<option value="False">False</option>
+					</select>
+				</span> 
+				<span id="digits"  style="display: none;"><label>精度:</label>
+					<input type="text" size="1" ng-model="my.dig_max" placeholder="整数"/>.<input type="text" size="1" ng-model="my.dig_dec" placeholder="小数"/>
+				</span>
+				<span id="ftablename"  style="display: none;">
+					<label>关联的对象名：</label>
+					<input type="text" size="5" ng-model="my.ftablename" placeholder="ftablename"/>
+				</span>
+				<label>注释：</label><input type="text" ng-model="my.common"><br>
+				<label>默认值：</label><input type="text" ng-model="my.default" placeholder="可以为空" ><br>
+				<div class="switch" data-on-label="True" data-off-label="false">
+					<label>nullable:</label><input type="checkbox"  ng-model="my.nullable" />
+				</div>
+				
+				<div class="switch" data-on-label="True" data-off-label="false">
+					<label>isunique:</label><input type="checkbox" ng-model="my.isunique" />
+				</div>
+				
+				<div class="switch" data-on-label="True" data-off-label="false">
+					<label>primary_key:</label><input type="checkbox" ng-model="my.primary_key" />
+				</div>
+				
+				
+				<br>
+				<a class="btn btn-primary btn-sm" ng-click="save()">新增或修改保存</a>
+				<a class="btn btn-primary btn-sm" ng-click="generalcoe()">生成代码</a>
+			  <hr>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>字段名</th>
+                    <th>长度</th>
+                    <th>类型</th>
+					<th>注释</th>
+					<th>可null</th>
+					<th>唯一</th>
+					<th>主键</th>
+					<th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="field in fields track by $index | orderBy:id " >
+                    <td>[[field.id]]</td>
+                    <td>[[field.name]]</td>
+                    <td>[[field.max_length]] [[field.true_false]] [[field.dig_max]][[field.dig_dec]]</td>
+					<td>[[field.type]]</td>
+                    <td>[[field.common]]</td>
+					<td>[[field.nullable]]</td>					
+					<td>[[field.isunique]]</td>
+					<td>[[field.primary_key]]</td>
+					<td>
+						<a class="btn btn-danger btn-xs" ng-click="del(  field )">删除</a>
+						<a class="btn btn-danger btn-xs" ng-click="open( field )">修改</a>
+					<td>
+                  </tr>                  
+                </tbody>
+                </table>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">model代码 </h3>
+            </div>
+            <div class="panel-body">            
+			  <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtmodels]]</textarea>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">views.py</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtviews]]</textarea>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">serializers.py</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtserializers]]</textarea>
+            </div>
+          </div>
+		  
+		
+		  
+          <div class="panel panel-primary">
+            <div class="panel-heading">index.html</div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtindex]]</textarea>
+            </div>
+          </div>
+		  <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">index.html.js&nbsp;</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txthtmljs]]</textarea>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">controllers.js&nbsp;</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtcontrollers]]</textarea>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">services.js</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txtservices]]</textarea>
+            </div>
+          </div>
+           <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">urls.py</h3>
+            </div>
+            <div class="panel-body">
+              <textarea style="margin: 0px; height: 150px; width: 100%;">[[txturls]]</textarea>
+            </div>
+          </div>
+          
+<!--           <h3 class="panel-title">Panel title</h3> -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6"></div>
+      </div>
+    </div>
+  </body>
+
+</html>
+<script>
+
+function doOpen(evt) {
+  var files = evt.target.files,
+      reader = new FileReader();
+    reader.onload = function() {
+        showout.value = this.result;
+    };
+    reader.readAsText(files[0]);
+}
+
+var openbtn = document.getElementById("openselect"),
+    showout = document.getElementById("showresult");
+openselect.addEventListener("change", doOpen, false); 
+</script>
+
+
